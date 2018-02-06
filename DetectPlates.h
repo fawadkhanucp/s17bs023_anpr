@@ -1,4 +1,3 @@
-// DetectPlates.h
 
 #ifndef DETECT_PLATES_H
 #define DETECT_PLATES_H

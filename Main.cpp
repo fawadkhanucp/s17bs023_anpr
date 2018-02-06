@@ -21,6 +21,9 @@ struct thread_args
 String numberplate = "";
 String Tempnumberplate = "";
 struct thread_args threadimage;
+string type = ".png";
+string path = "numplates/";
+stringstream ss;
 
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2)
 {
@@ -39,7 +42,6 @@ void *ReadImage(void *threadid) {
 
 	if (imgOriginalScene.empty()) {
 		cout << "Image not found." << endl;
-		_getch();
 		lck = pthread_mutex_unlock(&mtx);
 		pthread_exit(NULL);
 	}
@@ -99,6 +101,11 @@ void *ReadImage(void *threadid) {
 			Tempnumberplate = numberplate;
 			cout << "Number Plate = " << numberplate << endl;
 			cout << "************************************" << endl;
+			ss << path << numberplate << type;
+			string filename = ss.str();
+			ss.str("");
+			imwrite(filename, imgOriginalScene);
+
 			Sleep(5000);
 			lck = pthread_mutex_unlock(&mtx);
 			pthread_exit(NULL);
@@ -109,8 +116,6 @@ void *ReadImage(void *threadid) {
 			lck = pthread_mutex_unlock(&mtx);
 			pthread_exit(NULL);
 		}
-
-		imwrite("DetectedPlate.png", imgOriginalScene);
 	}
 
 	Sleep(1000);
@@ -191,7 +196,7 @@ int main(void) {
 				double a = contourArea(contours[i], false);
 
 
-				if (a < 25505.5 && a>8000 && approx.size() == 4) {
+				if (a < 30000 && a>8000 && approx.size() == 4) {
 					screenCnt = approx;
 
 					drawContours(imgOriginalScene, vector<vector<Point>>{screenCnt}, 0, Scalar(0, 255, 255), 3);
@@ -201,9 +206,6 @@ int main(void) {
 					c = imgOriginalScene.cols;
 
 					Rect re = boundingRect(contours[i]);
-
-
-
 
 					drawContours(mask, vector<vector<Point>>{screenCnt}, -1, Scalar(255), CV_FILLED);
 
@@ -215,20 +217,8 @@ int main(void) {
 
 					normalize(mask.clone(), mask, 0.0, 255.0, CV_MINMAX, CV_8UC3);
 
-
 					Rect cr = Rect(re.x, re.y, re.width, re.height);
-
-					Rect cr1 = Rect(re.x, re.y / 2, re.width, re.height / 2);
-					Mat cuted = crop(cr1);
 					Mat cut = crop(cr);
-
-					Size size(100, 100);//the dst image size,e.g.100x100
-					Mat dst;//dst image
-					Mat src;//src image
-
-					RotatedRect box = minAreaRect(Mat(screenCnt));
-					Mat rot_mat = getRotationMatrix2D(box.center, 45, 1);
-
 
 					cvtColor(cut, cut, CV_BGR2GRAY);
 					imwrite("NP.jpg", cut);
@@ -254,17 +244,6 @@ int main(void) {
 
 		}
 	}
-
 	pthread_exit(NULL);
 }
 
-
-void drawRedRectangleAroundPlate(Mat &imgOriginalScene, PossiblePlate &licPlate) {
-	Point2f p2fRectPoints[4];
-
-	licPlate.rrLocationOfPlateInScene.points(p2fRectPoints);
-
-	for (int i = 0; i < 4; i++) {
-		line(imgOriginalScene, p2fRectPoints[i], p2fRectPoints[(i + 1) % 4], SCALAR_RED, 2);
-	}
-}

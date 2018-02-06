@@ -1,4 +1,3 @@
-// DetectChars.h
 
 #ifndef DETECT_CHARS_H
 #define DETECT_CHARS_H
