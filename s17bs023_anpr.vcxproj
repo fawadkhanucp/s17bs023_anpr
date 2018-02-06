@@ -73,6 +73,14 @@
     <IncludePath>C:\threads\Pre-built.2\include;C:\OpenCV-3.3.1\opencv\build\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\threads\Pre-built.2\lib\x64;C:\OpenCV-3.3.1\opencv\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\threads\Pre-built.2\include;C:\OpenCV-3.3.1\opencv\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\threads\Pre-built.2\lib\x64;C:\OpenCV-3.3.1\opencv\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\threads\Pre-built.2\include;C:\OpenCV-3.3.1\opencv\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\threads\Pre-built.2\lib\x64;C:\OpenCV-3.3.1\opencv\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -80,6 +88,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opencv_world331.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -88,6 +99,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opencv_world331d.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

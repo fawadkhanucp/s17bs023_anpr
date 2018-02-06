@@ -131,7 +131,7 @@ int main(void) {
 	pthread_t thread;
 	int r = 0, c = 0;
 	Mat imgOriginalScene;
-	VideoCapture capture(1);
+	VideoCapture capture(0);
 	int q;
 
 	while (cvWaitKey(30) != 'q')
