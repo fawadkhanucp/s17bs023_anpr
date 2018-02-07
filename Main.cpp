@@ -12,18 +12,20 @@ using namespace std;
 using namespace cv;
 
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+String numberplate = "";
+String Tempnumberplate = "";
+string type = ".png";
+string path = "numplates/";
+stringstream ss;
 
 struct thread_args
 {
 	Mat extracted_image;
 
 };
-String numberplate = "";
-String Tempnumberplate = "";
+
 struct thread_args threadimage;
-string type = ".png";
-string path = "numplates/";
-stringstream ss;
+
 
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2)
 {
@@ -41,7 +43,6 @@ void *ReadImage(void *threadid) {
 	Mat imgOriginalScene = imread("NP.jpg");
 
 	if (imgOriginalScene.empty()) {
-		cout << "Image not found." << endl;
 		lck = pthread_mutex_unlock(&mtx);
 		pthread_exit(NULL);
 	}
@@ -124,29 +125,16 @@ void *ReadImage(void *threadid) {
 	return 0;
 }
 
-
-int main(void) {
-
-	bool blnKNNTrainingSuccessful = loadKNNDataAndTrainKNN();
-	if (blnKNNTrainingSuccessful == false) {
-		cout << "Training failed." << endl;
-		return(0);
-	}
-
+void videoStream() {
 	pthread_t thread;
-	int r = 0, c = 0;
 	Mat imgOriginalScene;
 	VideoCapture capture(0);
-	int q;
 
 	while (cvWaitKey(30) != 'q')
 	{
 		capture >> imgOriginalScene;
 		if (true)
 		{
-
-
-
 			Mat frame;
 
 			Mat gray;
@@ -166,8 +154,6 @@ int main(void) {
 
 				morphologyEx(hist, morph, MORPH_OPEN, getStructuringElement(MORPH_RECT, Size(5, 5)), Point(-1, -1), i);
 			}
-
-
 
 			Mat morph_image = hist - morph;
 
@@ -202,8 +188,6 @@ int main(void) {
 					drawContours(imgOriginalScene, vector<vector<Point>>{screenCnt}, 0, Scalar(0, 255, 255), 3);
 
 					Mat mask = Mat::zeros(imgOriginalScene.rows, imgOriginalScene.cols, CV_8UC1);
-					r = imgOriginalScene.rows;
-					c = imgOriginalScene.cols;
 
 					Rect re = boundingRect(contours[i]);
 
@@ -224,6 +208,10 @@ int main(void) {
 					imwrite("NP.jpg", cut);
 
 					threadimage.extracted_image = cut;
+					bool blnKNNTrainingSuccessful = loadKNNDataAndTrainKNN();
+					if (blnKNNTrainingSuccessful == false) {
+						cout << "Training failed." << endl;
+					}
 
 					int rc = pthread_create(&thread, NULL, ReadImage, (void *)1);
 
@@ -238,12 +226,17 @@ int main(void) {
 				}
 			}
 
-
 			imshow("Video Stream", imgOriginalScene);
-
 
 		}
 	}
 	pthread_exit(NULL);
+}
+
+
+int main(void) {
+
+	videoStream();
+
 }
 
